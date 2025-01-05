@@ -20,8 +20,8 @@ class ProductFactory extends Factory
             'name' => $this->faker->name(),
             'sku' => 'sku-' . $this->faker->unique()->numberBetween(1, 100),
             'price' => $this->faker->numberBetween(1000, 9999),
-            'initial_stock_quantity' => $this->faker->numberBetween(1, 1000),
-            'current_stock_quantity' => $this->faker->numberBetween(1, 1000),
+            'stock_quantity' => $this->faker->numberBetween(1, 1000),
+            'image' => $this->faker->randomElement(['products/product1.jpg', 'products/product2.jpg']),
         ];
     }
 

@@ -15,15 +15,17 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
 
-        foreach (['Electronics','Kitchen','Home','Office','Outdoor','Floor','Furniture'] as $category) {
-            Product::factory()
-                ->count(7)
-                ->forCategory([
-                    'name' => $category,
-                ])
-                ->create();
+        foreach (['Man','Kitchen','Home','Women','Outdoor','Floor','Furniture'] as $category) {
+            Category::factory()->create(['name' => $category]);
         }
+        Product::factory()
+            ->count(7)
+            ->create();
 
+        $products = Product::all();
+        foreach ($products as $product) {
+            $product->categories()->sync(Category::all()->random(3)->pluck('id'));
+        }
 
     }
 }

@@ -8,22 +8,17 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use Exception;
 
 class CategoryController extends Controller
 {
-    protected $categoryService;
-
-    public function __construct(CategoryService $categoryService)
-    {
-        $this->categoryService = $categoryService;
-    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-        return CategoryResource::collection($this->categoryService->listCategories([]));
+        $categories = Category::all();
+        return CategoryResource::collection($categories);
     }
 
     /**
@@ -39,7 +34,13 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        try {
+            $data = $request->validated();
+            $category = Category::create($data);
+            return CategoryResource::make($category);
+        }catch (Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
     }
 
     /**

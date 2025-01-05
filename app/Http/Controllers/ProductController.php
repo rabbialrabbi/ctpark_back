@@ -2,49 +2,40 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
-use App\Services\ProductService;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    protected $productService;
 
-    public function __construct(ProductService $productService)
+    public function index()
     {
-        $this->productService = $productService;
-    }
-
-    public function index(Request $request)
-    {
-        $filters = $request->only(['q', 'itemsPerPage', 'sortBy']);
-        return ProductResource::collection($this->productService->listProducts($filters));
+        $products = Product::all();
+        return ProductResource::collection($products);
     }
 
     public function store(StoreProductRequest $request)
     {
-        $data = $request->validated();
-        return ProductResource::make($this->productService->createProduct($data));
-    }
 
-    public function update(UpdateProductRequest $request, $id)
-    {
-        $data = $request->validated();
-        return ProductResource::make($this->productService->updateProduct($id, $data));
-    }
+        $request->validated();
 
-    public function destroy($id)
-    {
-        $this->productService->deleteProduct($id);
-        return response()->json(null, 204);
-    }
+        $url = '';
+        if($request->file('image')){
+            $url = $this->storeFile($request->image,'product');
+        }
 
-    public function desktopData()
-    {
-        $productCount = Product::count();
-        return response()->json(['productCount' => $productCount]);
+        $data = [
+            'name'=>$request->name,
+            'SKU' => 'sku' .mt_rand(1000, 9999),
+            'price' => mt_rand(1000, 9999),
+            'stock_quantity' => mt_rand(1, 1000),
+            'image' => $url,
+        ];
+
+        $product = Product::create($data);
+
+        $product->categories()->sync($request->categories);
+        return ProductResource::make($product);
     }
 
 
