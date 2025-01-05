@@ -18,6 +18,7 @@
 - Run php artisan migrate command for database migration
 - Run php artisan db:seed for seed data (optional)
 - Run php artisan key:generate for app key
+- Run php artisan storage:link for symbolic link
 - Run php artisan serve --port=8002 for server (By default front end will call in this port. for custom need to change in frontend .env file)
 
 ### Front end setup (Development)
